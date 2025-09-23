@@ -120,3 +120,100 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  @page {
+    size: A4 portrait; /* Garante que seja A4 vertical */
+    margin: 0; /* Remove margens padrão da impressora */
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body > *:not(.print-mount) {
+    /* Esconde tudo que não está no nosso ponto de montagem de impressão */
+    display: none !important;
+  }
+
+  .print-mount {
+    /* Garante que o container ocupe todo o espaço da página */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    /* Centraliza o conteúdo */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background-color: white !important;
+    /* Permite o escalonamento do conteúdo interno */
+    overflow: hidden !important;
+  }
+ 
+
+  /* 🔹 Define o cartão no tamanho físico de 14cm x 10cm */
+  .print-card {
+    width: 14cm !important;
+    height: 10cm !important;
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    /* Borda opcional só para visualizar os limites */
+    border: 1px solid black;
+  }
+
+  /* 🔹 Layout interno proporcional */
+  .print-card .row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas iguais */
+    border-top: 1px solid black;
+    flex: 1; /* Divide espaço igualmente entre as linhas */
+  }
+
+  .print-card .cell {
+    border-left: 1px solid black;
+    padding: 2mm;
+    font-size: 0.9em;
+  }
+
+    
+  /* 🔹 Define a requisição no tamanho físico de 17cm x 11cm */
+  .print-request {
+    width: 19.6cm !important;
+    height: 11.3cm !important;
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    /* Borda opcional só para visualizar os limites */
+    border: 1px solid black;
+  }
+
+  /* 🔹 Layout interno proporcional */
+  .print-request .row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas iguais */
+    border-top: 1px solid black;
+    flex: 1; /* Divide espaço igualmente entre as linhas */
+  }
+
+  .print-request .cell {
+    border-left: 1px solid black;
+    padding: 2mm;
+    font-size: 0.9em;
+  }  
+
+  /* Garante que fontes/backgrounds saiam na impressão */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
