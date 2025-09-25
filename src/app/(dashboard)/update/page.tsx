@@ -142,7 +142,7 @@ export default function UpdateCartoesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 border-2 border-slate-200">
       <div className="container mx-auto py-8 px-4">
         {/* Header da Página */}
         <div className="mb-8">

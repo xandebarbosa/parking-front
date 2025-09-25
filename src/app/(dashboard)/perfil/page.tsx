@@ -1,13 +1,15 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail, Save, Shield, User, Lock } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -77,104 +79,226 @@ export default function PerfilPage() {
     }
 
     const { isSubmitting } = form.formState;
+
   return (
-    <div className="container mx-auto py-10 flex justify-center">
-        <Card className="w-full max-w-2xl">
-            <CardHeader>
-                <CardTitle>Meu Perfil</CardTitle>
-                <CardDescription>Atualize seus dados pessoais e de acesso.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleUpdateUser)} className="space-y-8">
-                        <div>
-                            <h3 className="text-lg font-medium mb-4">Dados Pessoais</h3>
-                            <div className="space-y-4">
-                                <FormField 
-                                    name="name" 
-                                    control={form.control} 
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Nome</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} 
-                                />
-                                <FormField 
-                                    name="email" 
-                                    control={form.control} 
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>E-mail</FormLabel>
-                                            <FormControl>
-                                                <Input type="email" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} 
-                                />
-                            </div>
-
-                            <div>
-                                <h3 className="text-lg font-medium mb-4">Alterar Senha</h3>
-                                <p className="text-sm text-muted-foreground mb-4">
-                                 Preencha os campos abaixo somente se desejar alterar sua senha.
-                                </p>
-                                <div className="space-y-4">
-                                    <FormField
-                                        name="oldPassword" 
-                                        control={form.control}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Senha Antiga</FormLabel>
-                                                <FormControl>
-                                                    <Input type="password" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        name="password" 
-                                        control={form.control}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Nova Senha</FormLabel>
-                                                <FormControl>
-                                                    <Input type="password" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        name="confirmPassword" 
-                                        control={form.control}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Confirmar Nova Senha</FormLabel>
-                                                <FormControl>
-                                                    <Input type="password" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            </div>
-
-                            <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Salvar Alterações
-                            </Button>
+    <div className="min-h-screen rounded-md bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+            <div className="container mx-auto py-4 px-4">
+                <div className="max-w-4xl mx-auto">
+                    {/* Header da página */}
+                    <div className="mb-8 text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+                            <User className="w-8 h-8 text-white" />
                         </div>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
-    </div>
+                        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                            Configurações do Perfil
+                        </h1>
+                        <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                            Gerencie suas informações pessoais e configurações de segurança
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Sidebar com informações do usuário */}
+                        <div className="lg:col-span-1">
+                            <Card className="border-0 shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+                                <CardContent className="p-6">
+                                    <div className="text-center">
+                                        <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <span className="text-2xl font-bold text-white">
+                                                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                                            {user?.name || 'Usuário'}
+                                        </h3>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                            {user?.email || 'email@exemplo.com'}
+                                        </p>
+                                        <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                            <Shield className="w-3 h-3 mr-1" />
+                                            Conta Verificada
+                                        </Badge>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Formulário principal */}
+                        <div className="lg:col-span-2">
+                            <Card className="border-0 shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="flex items-center gap-2 text-xl text-slate-900 dark:text-slate-100">
+                                        <User className="w-5 h-5" />
+                                        Informações Pessoais
+                                    </CardTitle>
+                                    <CardDescription className="text-slate-600 dark:text-slate-400">
+                                        Atualize suas informações para manter sua conta segura e atualizada
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-5">
+                                    <Form {...form}>
+                                        <form onSubmit={form.handleSubmit(handleUpdateUser)} className="space-y-8">
+                                            {/* Seção de Dados Pessoais */}
+                                            <div className="space-y-6">
+                                                <div className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                                                    <Mail className="w-5 h-5 text-blue-500" />
+                                                    Dados Pessoais
+                                                </div>
+                                                
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <FormField 
+                                                        name="name" 
+                                                        control={form.control} 
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel className="text-slate-700 dark:text-slate-300 font-medium">
+                                                                    Nome Completo
+                                                                </FormLabel>
+                                                                <FormControl>
+                                                                    <Input 
+                                                                        {...field} 
+                                                                        className="h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 transition-colors"
+                                                                        placeholder="Digite seu nome completo"
+                                                                    />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )} 
+                                                    />
+                                                    <FormField 
+                                                        name="email" 
+                                                        control={form.control} 
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel className="text-slate-700 dark:text-slate-300 font-medium">
+                                                                    E-mail
+                                                                </FormLabel>
+                                                                <FormControl>
+                                                                    <Input 
+                                                                        type="email" 
+                                                                        {...field} 
+                                                                        className="h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 transition-colors"
+                                                                        placeholder="Digite seu e-mail"
+                                                                    />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )} 
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Separator className="bg-slate-200 dark:bg-slate-700" />
+
+                                            {/* Seção de Alteração de Senha */}
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <div className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                                                        <Lock className="w-5 h-5 text-purple-500" />
+                                                        Segurança da Conta
+                                                    </div>
+                                                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                                                        Preencha os campos abaixo somente se desejar alterar sua senha atual
+                                                    </p>
+                                                </div>
+                                                
+                                                <div className="space-y-3">
+                                                    <FormField
+                                                        name="oldPassword" 
+                                                        control={form.control}
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel className="text-slate-700 dark:text-slate-300 font-medium">
+                                                                    Senha Atual
+                                                                </FormLabel>
+                                                                <FormControl>
+                                                                    <Input 
+                                                                        type="password" 
+                                                                        {...field}
+                                                                        className="h-11 border-slate-200 dark:border-slate-700 focus:border-purple-500 transition-colors"
+                                                                        placeholder="Digite sua senha atual"
+                                                                    />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                    
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <FormField
+                                                            name="password" 
+                                                            control={form.control}
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-medium">
+                                                                        Nova Senha
+                                                                    </FormLabel>
+                                                                    <FormControl>
+                                                                        <Input 
+                                                                            type="password" 
+                                                                            {...field}
+                                                                            className="h-11 border-slate-200 dark:border-slate-700 focus:border-purple-500 transition-colors"
+                                                                            placeholder="Mínimo 6 caracteres"
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                        <FormField
+                                                            name="confirmPassword" 
+                                                            control={form.control}
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-medium">
+                                                                        Confirmar Nova Senha
+                                                                    </FormLabel>
+                                                                    <FormControl>
+                                                                        <Input 
+                                                                            type="password" 
+                                                                            {...field}
+                                                                            className="h-11 border-slate-200 dark:border-slate-700 focus:border-purple-500 transition-colors"
+                                                                            placeholder="Repita a nova senha"
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <Separator className="bg-slate-200 dark:bg-slate-700" />
+
+                                            {/* Botão de Submit */}
+                                            <div className="flex justify-end pt-1">
+                                                <Button 
+                                                    type="submit" 
+                                                    disabled={isSubmitting}
+                                                    className="h-11 px-8 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                                                >
+                                                    {isSubmitting ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                            Salvando...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Save className="mr-2 h-4 w-4" />
+                                                            Salvar Alterações
+                                                        </>
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </form>
+                                    </Form>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
   )
 }

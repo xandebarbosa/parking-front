@@ -9,10 +9,10 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-300 dark:bg-gray-900">
       <Sidebar />
-      <main className="p-4 sm:ml-64">
+      <main className="pl-2.5 pr-0 sm:ml-64">
         {/* Adiciona um padding no topo para o conteúdo não ficar colado */}
         <TooltipProvider>
-          <div className="p-4 sm:p-8 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-1">
+          <div className="px-4 pt-1.5! sm:p-8">
             {children}
           </div>
         </TooltipProvider>

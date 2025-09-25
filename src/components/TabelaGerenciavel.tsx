@@ -48,11 +48,11 @@ export function TabelaGerenciavel({ cartoes = [], onEdit, onDelete }: Props) {
     if (diffDays < 0) {
       return { text: "Vencido", variant: "destructive" as const, icon: AlertCircle };
     } else if (diffDays <= 7) {
-      return { text: "Vence em breve", variant: "destructive" as const, icon: AlertCircle };
+      return { text: "Vence em breve", color: '#faa307' as const, icon: AlertCircle };
     } else if (diffDays <= 30) {
-      return { text: "Atenção", variant: "secondary" as const, icon: AlertCircle };
+      return { text: "Atenção", color: '#778da9' as const, icon: AlertCircle };
     } else {
-      return { text: "Válido", variant: "default" as const, icon: CheckCircle2 };
+      return { text: "Válido", color: '#4f772d' as const, icon: CheckCircle2 };
     }
   };
 

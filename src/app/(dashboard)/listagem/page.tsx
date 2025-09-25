@@ -66,14 +66,14 @@ export default function ListagemCartoesPage() {
   }, [token]); // A dependência do token garante que a busca ocorra assim que ele estiver disponível
 
   console.log("setCartoes",setCartoes);
-  
+  //bg-gradient-to-r from-yellow-300 to-yellow-600
   
   return (
     <div className="mx-auto py-2">
-      <Card className="bg-amber-300">
+      <Card className="bg-gradient-to-r from-amber-300 to-amber-500 mb-4 shadow-lg border border-[#14213d]">
         <CardHeader>
-          <CardTitle className="text-gray-800">Cartões de Estacionamento Ativos</CardTitle>
-          <CardDescription className="text-sky-600">
+          <CardTitle className="text-[#001d3d]">Cartões de Estacionamento Ativos</CardTitle>
+          <CardDescription className="text-[#003566]">
             Lista de todos os cartões cadastrados, ordenados por data de validade.
           </CardDescription>
         </CardHeader>

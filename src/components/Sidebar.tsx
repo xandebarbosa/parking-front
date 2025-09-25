@@ -62,11 +62,13 @@ export function Sidebar() {
     {/* Header da Sidebar */}
     <div className="relative z-10 px-6 py-8 border-b border-slate-700/50">
       <div className="text-center mb-2">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl mb-4 shadow-lg">
-          {/** biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2v0a2 2 0 01-2-2v-5H8z" />
-          </svg>
+        <div className="inline-flex items-center justify-center w-16 h-16">
+          {/** biome-ignore lint/performance/noImgElement: <explanation> */}
+          <img
+            src="/logo-pmrv.png"
+            alt="Logo PMRV"
+            className="w-150 h-auto object-contain mix-blend-multiply"
+          />          
         </div>
         <h2 className="text-xl font-bold text-white mb-1">
           Sistema de Controle
@@ -78,14 +80,14 @@ export function Sidebar() {
     </div>
 
     {/* Menu Principal */}
-    <div className="flex-1 px-4 py-6 relative z-10">
+    <div className="flex-1 px-4 py-3 relative z-10">
       <nav className="space-y-2">
         {accessibleMenuItems.map((item, index) => (
           <div key={item.href} className="relative">
             <Link
               href={item.href}
               className={cn(
-                "group flex items-center px-4 py-3.5 rounded-xl text-slate-300 font-medium transition-all duration-200 hover:text-white relative overflow-hidden",
+                "group flex items-center px-4 py-2.5 rounded-xl text-slate-300 font-medium transition-all duration-200 hover:text-white relative overflow-hidden",
                 {
                   "bg-gradient-to-r from-blue-600/20 to-blue-500/10 text-white shadow-lg border border-blue-500/20": pathname === item.href,
                   "hover:bg-slate-700/50 hover:translate-x-1": pathname !== item.href,
@@ -185,7 +187,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Status do sistema */}
+      {/* Status do sistema
       <div className="mt-4 pt-4 border-t border-slate-700/30">
         <div className="flex items-center justify-between text-xs text-slate-400">
           <div className="flex items-center space-x-2">
@@ -194,7 +196,7 @@ export function Sidebar() {
           </div>
           <span className="font-mono">v2.1.0</span>
         </div>
-      </div>
+      </div> */}
     </div>
   </div>
 </aside>

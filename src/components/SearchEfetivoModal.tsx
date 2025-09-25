@@ -31,19 +31,32 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/services/api";
 import { toast } from "sonner";
-import { AlertCircle, Badge, CheckCircle2, Clock, Filter, Search, User, UserCheck, Users, X } from "lucide-react";
+import {
+  AlertCircle,
+  Badge,
+  CheckCircle2,
+  Clock,
+  Filter,
+  Search,
+  User,
+  UserCheck,
+  Users,
+  X,
+} from "lucide-react";
 
 interface SearchEfetivoModalProps {
   onEfetivoSelect: (efetivo: any) => void;
 }
 
-export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps) {
+export function SearchEfetivoModal({
+  onEfetivoSelect,
+}: SearchEfetivoModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedEfetivo, setSelectedEfetivo] = useState<any | null>(null);
-   const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
@@ -56,19 +69,23 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
 
       // 1. URL do endpoint foi atualizada para a rota genérica '/search'
       // 2. Usamos o objeto 'params' para passar os parâmetros de forma limpa e segura
-      api.get('/efetivos/search', {
-        params: {
-          name: debouncedSearchQuery, // Envia o texto da busca para o parâmetro 'name'
-          re: debouncedSearchQuery   // Envia O MESMO texto para o parâmetro 're'
-        }
-      })
-        .then(response => {
+      api
+        .get("/efetivos/search", {
+          params: {
+            name: debouncedSearchQuery, // Envia o texto da busca para o parâmetro 'name'
+            re: debouncedSearchQuery, // Envia O MESMO texto para o parâmetro 're'
+          },
+        })
+        .then((response) => {
           setResults(response.data);
-          
+
           // Adiciona ao histórico se houver resultados
           if (response.data.length > 0) {
-            setSearchHistory(prev => {
-              const newHistory = [debouncedSearchQuery, ...prev.filter(item => item !== debouncedSearchQuery)];
+            setSearchHistory((prev) => {
+              const newHistory = [
+                debouncedSearchQuery,
+                ...prev.filter((item) => item !== debouncedSearchQuery),
+              ];
               return newHistory.slice(0, 5);
             });
           }
@@ -95,7 +112,7 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
     }
   };
 
-   const handleQuickSearch = (term: string) => {
+  const handleQuickSearch = (term: string) => {
     setSearchQuery(term);
   };
 
@@ -107,28 +124,43 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
 
   const getRankColor = (postoGrad: string) => {
     const colors = {
-      'Major': 'bg-red-100 text-red-800',
-      'Capitão': 'bg-blue-100 text-blue-800',
-      'Tenente': 'bg-green-100 text-green-800',
-      '1º Sgt': 'bg-green-100 text-green-800',
-      'Cb PM': 'bg-yellow-100 text-yellow-800',
+      Major: "bg-red-100 text-red-800",
+      Capitão: "bg-blue-100 text-blue-800",
+      Tenente: "bg-green-100 text-green-800",
+      "1º Sgt": "bg-green-100 text-green-800",
+      "Cb PM": "bg-yellow-100 text-yellow-800",
     };
-    return colors[postoGrad as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return (
+      colors[postoGrad as keyof typeof colors] || "bg-gray-100 text-gray-800"
+    );
   };
+
+  const EfetivoDescription = ({ efetivo }: any) => {
+  if (!efetivo) {
+    return null;
+  }
+
+  return `    
+    Nome: ${efetivo.name}
+    RE: ${efetivo.re}
+    Posto/Grad: ${efetivo.postoGrad}
+    OPM: ${efetivo.opm}    
+  `;
+};
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="gap-2 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200"
+          <Button
+            variant="outline"
+            className="gap-2 outline-blue-500 h-11 bg-amber-300 text-white hover:bg-amber-400 hover:border-[#14213d] hover:text-[#14213d] transition-all duration-200"
           >
             <Users className="h-4 w-4" />
             Pesquisar Efetivo
           </Button>
         </DialogTrigger>
-        
+
         <DialogContent className="sm:max-w-4xl max-h-[90vh] flex flex-col">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="flex items-center gap-3 text-xl">
@@ -140,13 +172,12 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
           </DialogHeader>
 
           <div className="flex-1 overflow-hidden flex flex-col space-y-4 py-4">
-            
             {/* Área de Busca */}
             <div className="space-y-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Digite o nome, RE ou posto/graduação para pesquisar..."
+                  placeholder="Digite o nome ou RE para pesquisar..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-10 h-12 text-base border-2 focus:border-blue-500 focus:ring-blue-500"
@@ -189,11 +220,19 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
                   <div className="flex items-start gap-3">
                     <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div className="space-y-2">
-                      <p className="text-sm font-medium text-blue-800">Como pesquisar:</p>
+                      <p className="text-sm font-medium text-blue-800">
+                        Como pesquisar:
+                      </p>
                       <ul className="text-xs text-blue-700 space-y-1">
-                        <li>• Digite pelo menos 3 caracteres para iniciar a busca</li>
-                        <li>• Você pode buscar por nome, RE ou posto/graduação</li>
-                        <li>• A busca é feita automaticamente conforme você digita</li>
+                        <li>
+                          • Digite pelo menos 3 caracteres para iniciar a busca
+                        </li>
+                        <li>
+                          • Você pode buscar por nome e RE
+                        </li>
+                        <li>
+                          • A busca é feita automaticamente conforme você digita
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -210,26 +249,34 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
                     <div className="absolute top-0 left-0 w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   </div>
                   <div className="text-center">
-                    <p className="text-base font-medium text-gray-700">Buscando efetivos...</p>
+                    <p className="text-base font-medium text-gray-700">
+                      Buscando efetivos...
+                    </p>
                     <p className="text-sm text-gray-500">Aguarde um momento</p>
                   </div>
                 </div>
-              ) : hasSearched && results.length === 0 && searchQuery.length > 2 ? (
+              ) : hasSearched &&
+                results.length === 0 &&
+                searchQuery.length > 2 ? (
                 <div className="flex flex-col items-center justify-center h-48 space-y-4">
                   <div className="p-3 bg-gray-100 rounded-full">
                     <Users className="h-8 w-8 text-gray-400" />
                   </div>
                   <div className="text-center">
-                    <p className="text-base font-medium text-gray-700">Nenhum efetivo encontrado</p>
-                    <p className="text-sm text-gray-500">Tente usar outros termos de busca</p>
+                    <p className="text-base font-medium text-gray-700">
+                      Nenhum efetivo encontrado
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Tente usar outros termos de busca
+                    </p>
                   </div>
                 </div>
               ) : results.length > 0 ? (
                 <div className="space-y-2 overflow-y-auto max-h-96">
                   {results.map((efetivo) => (
                     // biome-ignore lint/a11y/noStaticElementInteractions: <explanation>
-// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-<div
+                    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+                    <div
                       key={efetivo.id}
                       onClick={() => setSelectedEfetivo(efetivo)}
                       className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all duration-200 group"
@@ -239,17 +286,19 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
                           <div className="p-2 bg-gray-100 group-hover:bg-blue-100 rounded-lg transition-colors duration-200">
                             <User className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
                           </div>
-                          
+
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-1">
                               <h3 className="font-semibold text-gray-900 group-hover:text-blue-900 truncate">
                                 {efetivo.name}
                               </h3>
-                              <div className={`px-2 py-1 rounded-full text-xs font-medium ${getRankColor(efetivo.postoGrad)}`}>
+                              <div
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${getRankColor(efetivo.postoGrad)}`}
+                              >
                                 {efetivo.postoGrad}
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center gap-4 text-sm text-gray-600">
                               <div className="flex items-center gap-1">
                                 <Badge className="h-3 w-3" />
@@ -268,7 +317,7 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="text-gray-400 group-hover:text-blue-600 transition-colors duration-200">
                           <UserCheck className="h-5 w-5" />
                         </div>
@@ -296,33 +345,29 @@ export function SearchEfetivoModal({ onEfetivoSelect }: SearchEfetivoModalProps)
       </Dialog>
 
       {/* Modal de Confirmação */}
-      <AlertDialog open={!!selectedEfetivo} onOpenChange={() => setSelectedEfetivo(null)}>
+      <AlertDialog
+        open={!!selectedEfetivo}
+        onOpenChange={() => setSelectedEfetivo(null)}
+      >
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-green-100 rounded-full">
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
               </div>
-              <AlertDialogTitle className="text-lg">Confirmar Seleção</AlertDialogTitle>
-            </div>
-            <AlertDialogDescription className="text-gray-600 space-y-2">
-              <p>Você está selecionando o seguinte efetivo:</p>
-              {selectedEfetivo && (
-                <div className="p-3 bg-gray-50 rounded-lg border">
-                  <p className="font-semibold text-gray-900">{selectedEfetivo.name}</p>
-                  <div className="text-sm text-gray-600 space-y-1 mt-1">
-                    <p>RE: {selectedEfetivo.re}</p>
-                    <p>Posto/Grad: {selectedEfetivo.postoGrad}</p>
-                    <p>OPM: {selectedEfetivo.opm}</p>
-                  </div>
-                </div>
-              )}
-              <p>Deseja continuar com esta seleção?</p>
+              <AlertDialogTitle className="text-lg">
+                Confirmar Seleção
+              </AlertDialogTitle>
+            </div>  
+            <AlertDialog><p className="text-gray-400 text-base">Você está selecionando o seguinte efetivo:</p></AlertDialog>          
+            <AlertDialogDescription className="text-gray-600 space-y-1 whitespace-pre-line"> 
+              <EfetivoDescription  efetivo={selectedEfetivo} />
             </AlertDialogDescription>
+            <AlertDialog><p className="text-gray-400 text-base mb-1">Deseja continuar com esta seleção?</p></AlertDialog>             
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel className="flex-1">Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleSelect}
               className="flex-1 bg-green-600 hover:bg-green-700 focus:ring-green-500"
             >
