@@ -34,6 +34,36 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+type CardStatus = "expired" | "expiring" | "valid";
+
+const ITEMS_PER_PAGE = 10;
+
+interface StatusConfig {
+  bgColor: string;
+  textColor: string;  
+}
+
+const STATUS_CONFIGS: Record<CardStatus, StatusConfig> = {
+  expired: {
+    bgColor: "bg-red-500",
+    textColor: "text-white",        
+  },
+  expiring: {
+    bgColor: "bg-orange-500",
+    textColor: "text-white",        
+  },
+  valid: {
+    bgColor: "bg-green-500",
+    textColor: "text-white",        
+  },
+};
+
+const STATUS_ORDER: Record<CardStatus, number> = {
+  expired: 0,
+  expiring: 1,
+  valid: 2,
+};
+
 export default function UpdateCartoesPage() {
   const [cartoes, setCartoes] = useState<CartaoEstacionamento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +72,7 @@ export default function UpdateCartoesPage() {
     useState<CartaoEstacionamento | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const { token } = useAuth();
 
   const fetchCartoes = async (showRefreshLoader = false) => {
@@ -142,10 +173,10 @@ export default function UpdateCartoesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 border-2 border-slate-200">
-      <div className="container mx-auto py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-r from-amber-300 to-amber-500 mb-4 shadow-lg rounded-sm border border-[#14213d]">
+      <div className="container mx-auto py-6 px-4">
         {/* Header da Página */}
-        <div className="mb-8">
+        <div className="mb-2">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
               <Settings className="w-6 h-6 text-white" />
@@ -154,14 +185,14 @@ export default function UpdateCartoesPage() {
               <h1 className="text-3xl font-bold text-slate-800">
                 Gerenciamento de Cartões
               </h1>
-              <p className="text-slate-600 mt-1">
+              <p className="text-indigo-600 mt-1">
                 Edite ou exclua cartões de estacionamento existentes
               </p>
             </div>
           </div>
 
           {/* Breadcrumb */}
-          <nav className="flex text-sm text-slate-500">
+          {/* <nav className="flex text-sm text-slate-500">
             <span>Dashboard</span>
             <span className="mx-2">/</span>
             <span>Estacionamento</span>
@@ -169,14 +200,14 @@ export default function UpdateCartoesPage() {
             <span className="text-slate-800 font-medium">
               Gerenciar Cartões
             </span>
-          </nav>
+          </nav> */}
         </div>
 
         {/* Card Principal */}
-        <Card className="shadow-xl border-0 bg-white/70 backdrop-blur-sm">
-          <CardHeader className="pb-6 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50">
+        <Card className="shadow-xl border-0 bg-white/70 backdrop-blur-sm py-0 pb-2">
+          <CardHeader className="pb-2 rounded-t-lg border-b border-slate-200 bg-gradient-to-r from-white to-slate-50 pt-0">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 p-4">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <ParkingCircle className="w-5 h-5 text-blue-600" />
                 </div>
@@ -226,7 +257,7 @@ export default function UpdateCartoesPage() {
             )}
           </CardHeader>
 
-          <CardContent className="pt-6">
+          <CardContent className="pt-0">
             {isLoading ? (
               <LoadingSkeleton />
             ) : (

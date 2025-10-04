@@ -38,6 +38,7 @@ import {
 import { createRoot } from "react-dom/client";
 import { FileText, Printer } from "lucide-react";
 import { SearchEfetivoModal } from "@/components/SearchEfetivoModal";
+import router from "next/router";
 
 // Regex para validar hora no formato HH:mm
 const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -185,20 +186,6 @@ export default function CadastroPage() {
     },
   });
 
-  // NOVO: Efeito para resetar o ID do efetivo se o RE for alterado manualmente
-  // const reValue = form.watch("re");
-  // // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  // useEffect(() => {
-  //   // Se o usuário selecionou um efetivo, mas depois alterou o RE,
-  //   // assumimos que ele quer cadastrar um novo.
-  //   if (existingEfetivoId) {
-  //     setExistingEfetivoId(null);
-  //     toast.info(
-  //       "O RE foi alterado. Um novo efetivo será criado se não existir.",
-  //     );
-  //   }
-  // }, [reValue]);
-
   const handleEfetivoSelect = (efetivo: any) => {
     console.log("Objeto 'efetivo' recebido do modal:", efetivo); // <--- ADICIONE ESTA LINHA
     // Usamos 'setValue' do react-hook-form para preencher os campos
@@ -227,18 +214,13 @@ export default function CadastroPage() {
         description: "Sua sessão expirou. Por favor, faça o login novamente.",
       });
       // Opcional: redirecionar para o login
-      // router.push('/login');
+      router.push('/login');
       return; // Interrompe a execução se não houver token
     }
     // Exibe um toast de carregamento
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
     const promise = new Promise(async (resolve, reject) => {
       try {
-        //Separa os dados para cada entidade
-
-        // const responseEfetivo = await api.post("/efetivos", efetivoData);
-        // const novoEfetivo = responseEfetivo.data;
-
         const vehicleData = {
           placa: values.placa,
           modelo: values.modelo,
@@ -259,7 +241,7 @@ export default function CadastroPage() {
         };
 
         // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-        let response;
+        //let response;
         // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
         let dadosFinaisParaImpressao;
 
@@ -267,7 +249,7 @@ export default function CadastroPage() {
         if (existingEfetivoId) {
           toast.info("Adicionando novo veículo ao efetivo existente...");
           // Você precisará de um endpoint na sua API para isso. Ex: POST /efetivos/{id}/vehicles
-          response = await api.post(
+          const response = await api.post(
             `/efetivos/${existingEfetivoId}/vehicles`,
             vehicleData,
           );
@@ -289,8 +271,7 @@ export default function CadastroPage() {
             secao: values.secao,
             ramal: values.ramal,
             pgu: values.pgu,
-            valCnh: values.valCnh,
-            // ... inclua os outros campos do efetivo que você precisa para a impressão
+            valCnh: values.valCnh,            
           };
 
           dadosFinaisParaImpressao = {
@@ -315,13 +296,15 @@ export default function CadastroPage() {
             valCnh: values.valCnh,
           };
 
-          response = await api.post("/full-cadastro", {
+          const response = await api.post("/full-cadastro", {
             efetivoData,
             vehicleData,
           });
+
           console.log("Resposta da API (Cadastro Completo):", response.data);
           const { efetivo, vehicle } = response.data;
-          setDadosParaImpressao({ efetivo, vehicle });
+          dadosFinaisParaImpressao = { efetivo, vehicle };
+          //setDadosParaImpressao({ efetivo, vehicle });
         }
         // Validação final para garantir que não estamos salvando undefined
         if (
@@ -334,9 +317,9 @@ export default function CadastroPage() {
         }
 
         setDadosParaImpressao(dadosFinaisParaImpressao);
-
         setIsSubmitted(true);
         resolve("Cadastro realizado com sucesso!");
+
       } catch (error: any) {
         // O erro agora pode vir com detalhes, vamos exibi-los
         const errorMessage =

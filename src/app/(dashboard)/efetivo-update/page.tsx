@@ -65,9 +65,9 @@ export default function UpdateEfetivoPage() {
 
   return (
     <div className="container mx-auto py-10">
-        <Card>
+        <Card className="bg-gradient-to-r from-amber-300 to-amber-500 mb-4 shadow-lg border border-[#14213d]">
             <CardHeader>
-                <CardTitle>Atualizar Efetivo</CardTitle>
+                <CardTitle className="text-2xl">Atualizar Efetivo</CardTitle>
                 <CardDescription>Edite ou exclua os militares existentes na tabela.</CardDescription>
             </CardHeader>
             <CardContent>

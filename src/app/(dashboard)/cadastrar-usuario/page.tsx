@@ -23,8 +23,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { api } from "@/services/api";
-import { AlertCircle, CheckCircle2, Loader2, Mail, Shield, User, UserPlus, Lock, User2, Settings } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  Mail,
+  Shield,
+  User,
+  UserPlus,
+  Lock,
+  User2,
+  Settings,
+  EyeOff,
+  Eye,
+} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 const newUserSchema = z
   .object({
@@ -34,7 +54,7 @@ const newUserSchema = z
     email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
     role: z.enum(["admin", "user"], {
       required_error: "Selecione o perfil do usuário",
-      invalid_type_error: "Função deve ser 'admin' ou 'user'"
+      invalid_type_error: "Função deve ser 'admin' ou 'user'",
     }),
     password: z.string().min(6, "A senha deve ter pelo menos seis caracteres"),
     confirmPassword: z.string().min(6, "A confirmação de senha é obrigatória."),
@@ -48,6 +68,17 @@ const newUserSchema = z
 type NewUserFormData = z.infer<typeof newUserSchema>;
 
 export default function CadastrarUsuarioPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
+
   const form = useForm<NewUserFormData>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
@@ -57,7 +88,7 @@ export default function CadastrarUsuarioPage() {
       password: "",
       confirmPassword: "",
     },
-    mode: "onChange" // Adicionado para validação em tempo real mais precisa
+    mode: "onChange", // Adicionado para validação em tempo real mais precisa
   });
 
   // 2. Função de submissão do formulário
@@ -66,11 +97,10 @@ export default function CadastrarUsuarioPage() {
       // Omitimos 'confirmPassword' do objeto enviado para a API
       const { name, email, role, password } = values;
 
-      console.log("Values ==>",values);
-      
+      console.log("Values ==>", values);
 
-      const promise = api.post('/users', { name, email, role, password });
-      
+      const promise = api.post("/users", { name, email, role, password });
+
       toast.promise(promise, {
         loading: "Criando novo usuário...",
         success: () => {
@@ -79,11 +109,11 @@ export default function CadastrarUsuarioPage() {
         },
         error: (err) => {
           // Captura erros específicos da API, como e-mail duplicado
-          const errorMessage = err.response?.data?.error || "Não foi possível criar o usuário.";
+          const errorMessage =
+            err.response?.data?.error || "Não foi possível criar o usuário.";
           return errorMessage;
         },
       });
-
     } catch (error) {
       toast.error("Ocorreu um erro inesperado. Tente novamente.");
     }
@@ -101,43 +131,51 @@ export default function CadastrarUsuarioPage() {
   const getFieldStatus = (fieldName: any, value: string) => {
     if (!value) return null;
     const fieldState = form.getFieldState(fieldName);
-    if (fieldState.error) return 'error';
-    
+    if (fieldState.error) return "error";
+
     // Validações específicas
     switch (fieldName) {
-      case 'name':
-        return value.length >= 5 ? 'success' : 'error';
-      case 'email':
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'success' : 'error';
-      case 'role':
-        return (value === 'admin' || value === 'user') ? 'success' : 'error';
-      case 'password':
-        return value.length >= 6 ? 'success' : 'error';
-      case 'confirmPassword':
-        return value === watchedPassword && value.length >= 6 ? 'success' : 'error';
+      case "name":
+        return value.length >= 5 ? "success" : "error";
+      case "email":
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "success" : "error";
+      case "role":
+        return value === "admin" || value === "user" ? "success" : "error";
+      case "password":
+        return value.length >= 6 ? "success" : "error";
+      case "confirmPassword":
+        return value === watchedPassword && value.length >= 6
+          ? "success"
+          : "error";
       default:
         return null;
     }
   };
 
   const StatusIcon = ({ status }: { status: string | null }) => {
-    if (status === 'success') return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-    if (status === 'error') return <AlertCircle className="w-4 h-4 text-red-500" />;
+    if (status === "success")
+      return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+    if (status === "error")
+      return <AlertCircle className="w-4 h-4 text-red-500" />;
     return null;
   };
 
   return (
-     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 rounded-t-md">
       {/* Header da Página */}
-      <div className="bg-white/70 backdrop-blur-sm border-b border-white/20 shadow-sm">
+      <div className="bg-[#14213d] border-yellow-300 text-white shadow-sm border rounded-t-md">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
               <UserPlus className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">Gerenciamento de Usuários</h1>
-              <p className="text-slate-600 text-sm">Cadastrar novo usuário no sistema</p>
+              <h1 className="text-2xl font-bold text-yellow-300">
+                Gerenciamento de Usuários
+              </h1>
+              <p className="text-indigo-700 text-sm">
+                Cadastrar novo usuário no sistema
+              </p>
             </div>
           </div>
         </div>
@@ -146,17 +184,16 @@ export default function CadastrarUsuarioPage() {
       {/* Conteúdo Principal */}
       <div className="container mx-auto px-6 py-8">
         {/* Breadcrumb */}
-        <nav className="flex text-sm text-slate-500 mb-8">
+        {/* <nav className="flex text-sm text-slate-500 mb-8">
           <span>Dashboard</span>
           <span className="mx-2">/</span>
           <span>Usuários</span>
           <span className="mx-2">/</span>
           <span className="text-slate-800 font-medium">Novo Usuário</span>
-        </nav>
+        </nav> */}
 
         {/* Layout Principal */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          
           {/* Sidebar Informativa */}
           <div className="xl:col-span-1 space-y-6">
             <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
@@ -172,18 +209,26 @@ export default function CadastrarUsuarioPage() {
                     <User className="w-3 h-3 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">Nome completo</p>
-                    <p className="text-xs text-slate-600">Mínimo de 5 caracteres</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      Nome completo
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Mínimo de 5 caracteres
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Mail className="w-3 h-3 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">E-mail válido</p>
-                    <p className="text-xs text-slate-600">Formato: usuario@dominio.com</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      E-mail válido
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Formato: usuario@dominio.com
+                    </p>
                   </div>
                 </div>
 
@@ -192,8 +237,12 @@ export default function CadastrarUsuarioPage() {
                     <User2 className="w-3 h-3 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">Perfil do usuário</p>
-                    <p className="text-xs text-slate-600">Selecione Admin ou user</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      Perfil do usuário
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Selecione Admin ou user
+                    </p>
                   </div>
                 </div>
 
@@ -202,8 +251,12 @@ export default function CadastrarUsuarioPage() {
                     <Lock className="w-3 h-3 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">Senha segura</p>
-                    <p className="text-xs text-slate-600">Mínimo de 6 caracteres</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      Senha segura
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Mínimo de 6 caracteres
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -217,23 +270,32 @@ export default function CadastrarUsuarioPage() {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Nome</span>
-                  <StatusIcon status={getFieldStatus('name', watchedName)} />
+                  <StatusIcon status={getFieldStatus("name", watchedName)} />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">E-mail</span>
-                  <StatusIcon status={getFieldStatus('email', watchedEmail)} />
+                  <StatusIcon status={getFieldStatus("email", watchedEmail)} />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Perfil do usuário</span>
-                  <StatusIcon status={getFieldStatus('role', watchedRole)} />
+                  <span className="text-sm text-slate-600">
+                    Perfil do usuário
+                  </span>
+                  <StatusIcon status={getFieldStatus("role", watchedRole)} />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Senha</span>
-                  <StatusIcon status={getFieldStatus('password', watchedPassword)} />
+                  <StatusIcon
+                    status={getFieldStatus("password", watchedPassword)}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Confirmação</span>
-                  <StatusIcon status={getFieldStatus('confirmPassword', watchedConfirmPassword)} />
+                  <StatusIcon
+                    status={getFieldStatus(
+                      "confirmPassword",
+                      watchedConfirmPassword,
+                    )}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -241,21 +303,24 @@ export default function CadastrarUsuarioPage() {
 
           {/* Formulário Principal */}
           <div className="xl:col-span-2">
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-6 border-b border-slate-200 bg-gradient-to-r from-white to-slate-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <UserPlus className="w-5 h-5 text-blue-600" />
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm py-0 pb-6 gap-0.5">
+              <CardHeader className="pb-4 bg-gradient-to-r from-amber-300 to-amber-500 shadow-lg border rounded-sm pt-0">
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <UserPlus className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl text-slate-800">Cadastrar Novo Usuário</CardTitle>
-                    <CardDescription className="text-slate-600 mt-1">
-                      Preencha os dados abaixo para criar uma nova conta de acesso ao sistema
+                    <CardTitle className="text-xl text-slate-800">
+                      Cadastrar Novo Usuário
+                    </CardTitle>
+                    <CardDescription className="text-white mt-1">
+                      Preencha os dados abaixo para criar uma nova conta de
+                      acesso ao sistema
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="pt-8">
                 <Form {...form}>
                   <form
@@ -269,7 +334,8 @@ export default function CadastrarUsuarioPage() {
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-slate-700 flex items-center gap-2">
                             <User className="w-4 h-4" />
-                            Nome Completo <span className="text-red-500">*</span>
+                            Nome Completo{" "}
+                            <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <div className="relative">
@@ -279,7 +345,9 @@ export default function CadastrarUsuarioPage() {
                                 className="h-12 pl-4 pr-10 border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                               />
                               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                <StatusIcon status={getFieldStatus('name', field.value)} />
+                                <StatusIcon
+                                  status={getFieldStatus("name", field.value)}
+                                />
                               </div>
                             </div>
                           </FormControl>
@@ -306,7 +374,9 @@ export default function CadastrarUsuarioPage() {
                                 className="h-12 pl-4 pr-10 border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                               />
                               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                <StatusIcon status={getFieldStatus('email', field.value)} />
+                                <StatusIcon
+                                  status={getFieldStatus("email", field.value)}
+                                />
                               </div>
                             </div>
                           </FormControl>
@@ -322,35 +392,53 @@ export default function CadastrarUsuarioPage() {
                         <FormItem>
                           <FormLabel className="text-sm font-medium text-slate-700 flex items-center gap-2">
                             <Settings className="w-4 h-4" />
-                            Função do Usuário <span className="text-red-500">*</span>
+                            Função do Usuário{" "}
+                            <span className="text-red-500">*</span>
                           </FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
                             <FormControl>
                               <div className="relative">
                                 <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200">
                                   <SelectValue placeholder="Selecione a função" />
                                 </SelectTrigger>
                                 <div className="absolute right-10 top-1/2 -translate-y-1/2 pointer-events-none">
-                                  <StatusIcon status={getFieldStatus('role', field.value)} />
+                                  <StatusIcon
+                                    status={getFieldStatus("role", field.value)}
+                                  />
                                 </div>
                               </div>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="admin" className="cursor-pointer">
+                              <SelectItem
+                                value="admin"
+                                className="cursor-pointer"
+                              >
                                 <div className="flex items-center gap-2">
                                   <Shield className="w-4 h-4 text-red-600" />
                                   <div>
-                                    <div className="font-medium">Administrador</div>
-                                    <div className="text-xs text-slate-500">Acesso total ao sistema</div>
+                                    <div className="font-medium">
+                                      Administrador
+                                    </div>
+                                    <div className="text-xs text-slate-500">
+                                      Acesso total ao sistema
+                                    </div>
                                   </div>
                                 </div>
                               </SelectItem>
-                              <SelectItem value="user" className="cursor-pointer">
+                              <SelectItem
+                                value="user"
+                                className="cursor-pointer"
+                              >
                                 <div className="flex items-center gap-2">
                                   <User className="w-4 h-4 text-blue-600" />
                                   <div>
                                     <div className="font-medium">Usuário</div>
-                                    <div className="text-xs text-slate-500">Acesso limitado</div>
+                                    <div className="text-xs text-slate-500">
+                                      Acesso limitado
+                                    </div>
                                   </div>
                                 </div>
                               </SelectItem>
@@ -360,7 +448,7 @@ export default function CadastrarUsuarioPage() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
@@ -374,13 +462,39 @@ export default function CadastrarUsuarioPage() {
                             <FormControl>
                               <div className="relative">
                                 <Input
-                                  type="password"
+                                  type={showPassword ? "text" : "password"}
                                   placeholder="••••••••••"
                                   {...field}
                                   className="h-12 pl-4 pr-10 border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                                 />
+                                <button
+                                  type="button"
+                                  onClick={togglePasswordVisibility}
+                                  className="absolute right-10 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 focus:outline-none"
+                                  aria-label={
+                                    showPassword
+                                      ? "Ocultar senha"
+                                      : "Mostrar senha"
+                                  }
+                                  title={
+                                    showPassword
+                                      ? "Ocultar senha"
+                                      : "Mostrar senha"
+                                  }
+                                >
+                                  {showPassword ? (
+                                    <EyeOff className="w-5 h-5" />
+                                  ) : (
+                                    <Eye className="w-5 h-5" />
+                                  )}
+                                </button>
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                  <StatusIcon status={getFieldStatus('password', field.value)} />
+                                  <StatusIcon
+                                    status={getFieldStatus(
+                                      "password",
+                                      field.value,
+                                    )}
+                                  />
                                 </div>
                               </div>
                             </FormControl>
@@ -388,7 +502,7 @@ export default function CadastrarUsuarioPage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="confirmPassword"
@@ -396,18 +510,47 @@ export default function CadastrarUsuarioPage() {
                           <FormItem>
                             <FormLabel className="text-sm font-medium text-slate-700 flex items-center gap-2">
                               <Shield className="w-4 h-4" />
-                              Confirmar Senha <span className="text-red-500">*</span>
+                              Confirmar Senha{" "}
+                              <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Input
-                                  type="password"
+                                  type={
+                                    showConfirmPassword ? "text" : "password"
+                                  }
                                   placeholder="••••••••••"
                                   {...field}
                                   className="h-12 pl-4 pr-10 border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={toggleConfirmPasswordVisibility}
+                                    className="absolute right-10 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 focus:outline-none"
+                                    aria-label={
+                                      showConfirmPassword
+                                        ? "Ocultar senha"
+                                        : "Mostrar senha"
+                                    }
+                                    title={
+                                      showConfirmPassword
+                                        ? "Ocultar senha"
+                                        : "Mostrar senha"
+                                    }
+                                  >
+                                    {showConfirmPassword ? (
+                                      <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                      <Eye className="h-5 w-5" />
+                                    )}
+                                  </button>
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                  <StatusIcon status={getFieldStatus('confirmPassword', field.value)} />
+                                  <StatusIcon
+                                    status={getFieldStatus(
+                                      "confirmPassword",
+                                      field.value,
+                                    )}
+                                  />                                  
                                 </div>
                               </div>
                             </FormControl>
@@ -418,9 +561,9 @@ export default function CadastrarUsuarioPage() {
                     </div>
 
                     <div className="pt-6 border-t border-slate-200">
-                      <Button 
-                        type="submit" 
-                        className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 text-white font-medium shadow-lg" 
+                      <Button
+                        type="submit"
+                        className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 text-white font-medium shadow-lg"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
@@ -444,5 +587,5 @@ export default function CadastrarUsuarioPage() {
         </div>
       </div>
     </div>
-  ); 
+  );
 }

@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 
 // Schema de validação com Zod
 const formSchema = z.object({
@@ -30,7 +32,13 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
   const { signIn } = useAuth();
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -137,26 +145,40 @@ export default function LoginPage() {
                         <FormControl>
                           <div className="relative">
                             <Input
-                              type="password"
+                              type={showPassword ? "text" : "password"}
                               placeholder="••••••••••••"
                               {...field}
                               className="bg-yellow-50 border-yellow-200 focus:border-yellow-400 focus:ring-yellow-300 text-gray-900 rounded-lg py-3 px-4 pr-12 text-base transition-all duration-200 placeholder:text-yellow-600/70"
                             />
-                            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                              {/** biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                              <svg
-                                className="h-5 w-5 text-yellow-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                            <div className="absolute inset-y-0 right-3 flex items-center gap-2">
+                              {/* Botão de Toggle */}
+                              <button
+                                type="button"
+                                onClick={togglePasswordVisibility}
+                                className="text-yellow-600 hover:text-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1 rounded p-1"
+                                aria-label={
+                                  showPassword
+                                    ? "Ocultar senha"
+                                    : "Mostrar senha"
+                                }
+                                title={
+                                  showPassword
+                                    ? "Ocultar senha"
+                                    : "Mostrar senha"
+                                }
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                                />
-                              </svg>
+                                {showPassword ? (
+                                  <EyeOff className="h-5 w-5" />
+                                ) : (
+                                  <Eye className="h-5 w-5" />
+                                )}
+                              </button>
+
+                              {/* Divisor */}
+                              <div className="h-5 w-px bg-yellow-300"></div>
+
+                              {/* Ícone de Cadeado */}
+                              <Lock className="h-5 w-5 text-yellow-600" />
                             </div>
                           </div>
                         </FormControl>
