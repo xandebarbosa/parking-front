@@ -1,0 +1,46 @@
+# .github/workflows/ci.yml
+
+name: CI de Testes do Parking Front
+
+# Gatilhos: Quando esta ação deve rodar?
+on:
+  # Roda quando um Pull Request for aberto ou atualizado para a branch 'main'
+  pull_request:
+    branches: [main]
+  # Roda também quando um push é feito diretamente na 'main'
+  push:
+    branches: [main]
+
+jobs:
+  # O nome do nosso "trabalho"
+  testes-e2e:
+    # O tipo de máquina que vamos usar para rodar os testes
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clona o seu repositório para dentro da máquina do GitHub
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Node.js
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Use a mesma versão que você usa localmente
+
+      # 3. Instala as dependências do projeto
+      - name: Instalar dependências
+        run: npm install
+
+      # 4. Roda os testes do Cypress de forma "headless" (sem interface gráfica)
+      # O 'start-server-and-test' é uma ótima ferramenta que:
+      #    - Inicia seu servidor de desenvolvimento (npm run dev)
+      #    - Espera a porta 3000 ficar acessível
+      #    - Roda os testes (npm run cypress:run)
+      #    - Desliga o servidor no final
+      - name: Rodar testes Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm run start
+          # A URL base já está no seu cypress.config.ts, então não precisa configurar aqui.

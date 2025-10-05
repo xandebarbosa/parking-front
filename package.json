@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
