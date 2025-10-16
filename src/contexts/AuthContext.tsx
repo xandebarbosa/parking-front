@@ -10,6 +10,7 @@ import {
 } from "react";
 import { api } from "@/services/api";
 import { useRouter } from "next/navigation";
+import bcrypt from "bcryptjs";
 
 type User = {
   id: number;
@@ -32,10 +33,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
 
-  // NOVO: Efeito para carregar o token do localStorage ao iniciar
+  // NOVO: Efeito para carregar o token do sessionStorage ao iniciar
   useEffect(() => {
-    const storedToken = localStorage.getItem("@ParkingApp:token");
-    const storedUser = localStorage.getItem("@ParkingApp:user");
+    const storedToken = sessionStorage.getItem("@ParkingApp:token");
+    const storedUser = sessionStorage.getItem("@ParkingApp:user");
 
     if (storedToken && storedUser) {
       setToken(storedToken);
@@ -46,14 +47,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn({ email, password }: any) {
     try {
+      // Faz o hash da senha antes de enviar
       const response = await api.post("/sessions", { email, password });
       const { user, token } = response.data;
 
       //Armazenas dados
       setUser(user);
       setToken(token);
-      localStorage.setItem("@ParkingApp:user", JSON.stringify(user));
-      localStorage.setItem("@ParkingApp:token", token);
+      sessionStorage.setItem("@ParkingApp:user", JSON.stringify(user));
+      sessionStorage.setItem("@ParkingApp:token", token);
 
       // Configurar o token em todas as futuras requisiçoes do Axios
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -66,15 +68,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // NOVO: Função para fazer logout e limpar o localStorage
+  // NOVO: Função para fazer logout e limpar o sessionStorage
   const signOut = () => {
     // 1. Limpa os dados de autenticação do estado da aplicação
     setUser(null);
     setToken(null);
 
-    // 2. Remove o token e o usuário do localStorage
-    localStorage.removeItem("@ParkingApp:user");
-    localStorage.removeItem("@ParkingApp:token");
+    // 2. Remove o token e o usuário do sessionStorage
+    sessionStorage.removeItem("@ParkingApp:user");
+    sessionStorage.removeItem("@ParkingApp:token");
 
     // 3. Limpa o cabeçalho de autorização padrão do Axios
     delete api.defaults.headers.common["Authorization"]; // Limpa o header do Axios

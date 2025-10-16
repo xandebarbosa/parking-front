@@ -1,5 +1,3 @@
-// src/components/print/Cartao.tsx
-import React from "react";
 
 interface CartaoProps {
   efetivo: any;

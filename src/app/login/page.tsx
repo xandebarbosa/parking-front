@@ -22,8 +22,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Schema de validação com Zod
 const formSchema = z.object({
@@ -33,8 +34,16 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState("");
-  const { signIn } = useAuth();
+  const { signIn, token, user } = useAuth();
+  const router = useRouter();
+
+  // Redireciona se o usuário já estiver autenticado
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (token && user) {
+      router.push("/");
+    }
+  }, [token, user, router]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -59,6 +68,21 @@ export default function LoginPage() {
         description: error.message || "Ocorreu um erro, tente novamente.",
       });
     }
+  }
+
+  // Se já estiver autenticado, mostra um loading
+  if (token && user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-yellow-300">
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-yellow-500 rounded-full animate-pulse"></div>
+            <div className="absolute top-0 left-0 w-16 h-16 border-4 border-yellow-800 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-lg font-medium text-gray-900">Redirecionando...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -151,7 +175,6 @@ export default function LoginPage() {
                               className="bg-yellow-50 border-yellow-200 focus:border-yellow-400 focus:ring-yellow-300 text-gray-900 rounded-lg py-3 px-4 pr-12 text-base transition-all duration-200 placeholder:text-yellow-600/70"
                             />
                             <div className="absolute inset-y-0 right-3 flex items-center gap-2">
-                              {/* Botão de Toggle */}
                               <button
                                 type="button"
                                 onClick={togglePasswordVisibility}
@@ -173,11 +196,7 @@ export default function LoginPage() {
                                   <Eye className="h-5 w-5" />
                                 )}
                               </button>
-
-                              {/* Divisor */}
                               <div className="h-5 w-px bg-yellow-300"></div>
-
-                              {/* Ícone de Cadeado */}
                               <Lock className="h-5 w-5 text-yellow-600" />
                             </div>
                           </div>
@@ -225,7 +244,6 @@ export default function LoginPage() {
             </CardContent>
           </Card>
 
-          {/* Informações adicionais */}
           <div className="mt-8 text-center">
             <p className="text-yellow-800 text-sm font-medium">
               Controle seguro e eficiente de estacionamentos
@@ -240,14 +258,12 @@ export default function LoginPage() {
       </div>
 
       <div className="hidden md:flex w-1/2 items-center justify-center bg-gradient-to-br from-gray-300 to-gray-500 relative overflow-hidden">
-        {/* Elementos decorativos da direita */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-20 w-64 h-64 bg-yellow-400 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-48 h-48 bg-yellow-500 rounded-full blur-2xl"></div>
           <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-yellow-300 rounded-full blur-xl"></div>
         </div>
 
-        {/* Container da imagem */}
         <div className="relative z-10 p-8">
           {/** biome-ignore lint/performance/noImgElement: <explanation> */}
           <img

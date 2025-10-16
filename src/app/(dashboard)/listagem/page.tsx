@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 // Componentes que criamos e de UI
-import { CardsValidityTable } from "@/components/CardsValidityTable";
+import { CardsValidityTable } from "@/components/cards-validity-table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton"; // Ótimo para feedback de loading
 
