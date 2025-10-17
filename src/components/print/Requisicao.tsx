@@ -1,6 +1,5 @@
 // src/components/print/Requisicao.tsx
 import React from "react";
-import { Calendar } from "lucide-react";
 
 interface RequisicaoProps {
   efetivo: any; 
@@ -170,7 +169,7 @@ export default function Requisicao({ efetivo, vehicle }: RequisicaoProps) {
           </div>
           <p className="font-bold text-[10px] text-center pt-6">RE:</p>
           <div className="text-[10px] text-center border border-black p-0.5 h-5">
-            {"126.126-1"}
+            {vehicle?.reFiscalizador}
           </div>
         </div>
       </div>

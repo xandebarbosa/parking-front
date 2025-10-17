@@ -10,7 +10,6 @@ import {
 } from "react";
 import { api } from "@/services/api";
 import { useRouter } from "next/navigation";
-import bcrypt from "bcryptjs";
 
 type User = {
   id: number;
@@ -24,6 +23,7 @@ interface AuthContextData {
   token: string | null;
   signIn: (credentials: any) => Promise<void>;
   signOut: () => void;
+  updateUserContext: (userData: User) => void; 
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -85,8 +85,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push("/login");
   };
 
+  // ADICIONE ESTA NOVA FUNÇÃO
+  function updateUserContext(userData: User) {
+    setUser(userData);
+    sessionStorage.setItem("@ParkingApp:user", JSON.stringify(userData));
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, token, signIn, signOut, updateUserContext }}>
       {children}
     </AuthContext.Provider>
   );

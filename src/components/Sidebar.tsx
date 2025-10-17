@@ -19,10 +19,10 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { href: "/", label: "Início", icon: Home },
-  { href: "/cadastros", label: "Cadastro", icon: PlusCircle },
+  { href: "/cadastros", label: "Cadastro Cartão", icon: PlusCircle },
   { href: "/update", label: "Atualizar Cartão", icon: FilePen},
   { href: "/efetivo-update", label: "Atualizar Efetivo", icon: UserRoundPen},
-  { href: "/pesquisar-cartao", label: "Pesquisar cartão", icon: IdCard},
+  { href: "/pesquisar-cartao", label: "Pesquisar Cartão", icon: IdCard},
   { href: "/cadastrar-usuario", label: "Cadastro Usuário", icon: UserCircle2, roles: ['admin'] },
   { href: "/usuarios", label: "Usuários", icon: Users2, roles: ['admin']}
   // Adicione mais itens aqui no futuro

@@ -40,21 +40,21 @@ const ITEMS_PER_PAGE = 10;
 
 interface StatusConfig {
   bgColor: string;
-  textColor: string;  
+  textColor: string;
 }
 
 const STATUS_CONFIGS: Record<CardStatus, StatusConfig> = {
   expired: {
     bgColor: "bg-red-500",
-    textColor: "text-white",        
+    textColor: "text-white",
   },
   expiring: {
     bgColor: "bg-orange-500",
-    textColor: "text-white",        
+    textColor: "text-white",
   },
   valid: {
     bgColor: "bg-green-500",
-    textColor: "text-white",        
+    textColor: "text-white",
   },
 };
 
@@ -300,31 +300,31 @@ export default function UpdateCartoesPage() {
               <AlertDialogDescription className="text-slate-600 leading-relaxed">
                 Esta ação não pode ser desfeita. O cartão será permanentemente
                 removido do sistema.
-                {selectedCartao && (
-                  <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Car className="w-4 h-4 text-slate-500" />
-                      <span className="font-medium text-slate-700">
-                        Cartão #{selectedCartao.card_number}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm mt-1">
-                      <span className="text-slate-500">Placa:</span>
-                      <span className="font-mono font-medium text-slate-800">
-                        {formatPlaca(selectedCartao.placa)}
-                      </span>
-                    </div>
-                    {selectedCartao.efetivo?.name && (
-                      <div className="flex items-center gap-2 text-sm mt-1">
-                        <span className="text-slate-500">Proprietário:</span>
-                        <span className="font-medium text-slate-800">
-                          {selectedCartao.efetivo.name}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
               </AlertDialogDescription>
+              {selectedCartao && (
+                <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Car className="w-4 h-4 text-slate-500" />
+                    <span className="font-medium text-slate-700">
+                      Cartão #{selectedCartao.card_number}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm mt-1">
+                    <span className="text-slate-500">Placa:</span>
+                    <span className="font-mono font-medium text-slate-800">
+                      {formatPlaca(selectedCartao.placa)}
+                    </span>
+                  </div>
+                  {selectedCartao.efetivo?.name && (
+                    <div className="flex items-center gap-2 text-sm mt-1">
+                      <span className="text-slate-500">Proprietário:</span>
+                      <span className="font-medium text-slate-800">
+                        {selectedCartao.efetivo.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
             </AlertDialogHeader>
             <AlertDialogFooter className="pt-4 border-t border-slate-200">
               <AlertDialogCancel className="hover:bg-slate-100">

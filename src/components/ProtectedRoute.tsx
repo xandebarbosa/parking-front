@@ -45,13 +45,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="text-center space-y-4">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-200 rounded-full animate-pulse"></div>
-            <div className="absolute top-0 left-0 w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative h-16 w-16">
+            <div className="absolute top-0 left-0 h-full w-full rounded-full border-4 border-blue-200 dark:border-slate-700" />
+            <div className="absolute top-0 left-0 h-full w-full animate-spin rounded-full border-4 border-t-transparent border-blue-600 dark:border-blue-500" />
           </div>
-          <div>
-            <p className="text-lg font-medium text-gray-700">Verificando autenticação...</p>
+          <div className="text-center">
+            <p className="text-lg font-medium text-gray-700">
+              Verificando autenticação...
+            </p>
             <p className="text-sm text-gray-500">Aguarde um momento</p>
           </div>
         </div>
